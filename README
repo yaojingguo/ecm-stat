@@ -5,6 +5,15 @@ Package
 ========
  - Use min versions for JavaScript and CSS
  
+ 
+Task
+====
+ - Servlet testing
+ - jquery ajax: format submitting and client-server interaction
+ - Datbase
+   - Schema design
+   - Spring coding
+ 
  TODO
  =====
   - Adjust directory structure in the maven ways
