@@ -10,7 +10,11 @@ import org.junit.Test;
 
 public class JacksonTest {
   @Test
-  public void one() {
+  public void testBuild() {
+    System.out.println(buildData());
+  }
+  
+  public static String buildData() {
     try {
       Map data = new HashMap();
       List x = new ArrayList();
@@ -27,10 +31,11 @@ public class JacksonTest {
       y.add(300);
       data.put("x", x);
       data.put("y", y);
-
+      data.put("chartType", 0);
+      
       ObjectMapper mapper = new ObjectMapper();
       String json = mapper.writeValueAsString(data);
-      System.out.println(json);
+      return json;
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

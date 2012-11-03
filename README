@@ -8,8 +8,6 @@ Package
  
 Task
 ====
- - Servlet testing
- - jquery ajax: format submitting and client-server interaction
  - Datbase (MySQL)
    - Schema design
    - Spring coding

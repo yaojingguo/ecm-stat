@@ -1,6 +1,7 @@
 package com.strongit.ecm.stat;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,12 +14,23 @@ public class StatServlet extends HttpServlet {
       throws ServletException, IOException {
     doGet(request, response);
   }
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     String beginDate = request.getParameter("beginDate");
     String endDate = request.getParameter("endDate");
     int chartType = Integer.parseInt(request.getParameter("chartType"));
-    System.out.println("beginDate: " + beginDate + ", endDate: " + endDate + ", chartType:" + chartType);
+    System.out.println("beginDate: " + beginDate + ", endDate: " + endDate
+        + ", chartType:" + chartType);
+
+    response.setCharacterEncoding("UTF-8");
+    response.setContentType("application/json");
+    PrintWriter pw = response.getWriter();
+    String json = JacksonTest.buildData();
+    System.out.println("data json string: " + json);
+    pw.print(json);
+    pw.close();
   }
+
 }
