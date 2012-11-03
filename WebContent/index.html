@@ -24,15 +24,26 @@
 <body>
 
 <h2>日报表</h2>
-<div id="day_stat"></div>
+<div id="dayStat"></div>
 <h2>月报表</h2>
-<div id="month_stat"></div>
+<div id="monthStat"></div>
 
 <h2>Load from json string</h2>
-<div id="json_str"></div>
+<div id="jsonStr"></div>
 
-<h2>Load from server</h2>
-<div id="json_server"></div>
+<h2>查询</h2>
+<div>
+<form id="statQuery">
+<p>开始时间：<input type="text" name="beginDate"/></p>
+<p>结束时间：<input type="text" name="beginDate"></p>
+<p>报表种类：<select name="chartType">
+          <option value="0">柱状图</option>
+          <option value="1">曲线图</option>
+</select>
+</p>
+</form>
+</div>
+<div id="jsonServer"></div>
 
 <!-- TEST -->
 <div id="chart1" ></div>

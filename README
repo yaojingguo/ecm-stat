@@ -10,12 +10,19 @@ Task
 ====
  - Servlet testing
  - jquery ajax: format submitting and client-server interaction
- - Datbase
+ - Datbase (MySQL)
    - Schema design
    - Spring coding
+ - Export CSV. JDBC to CSV library?
+
  
  TODO
  =====
+  - Add logging
   - Adjust directory structure in the maven ways
   - JavaScript unit test
   - Remove test code when release
+   - Analyze and load file to database. 
+   - Schedule the task
+     - Quatz or cront4j
+     - If use python, introduce a lot of dependencies. Maybe to use clojure?
