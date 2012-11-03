@@ -9,3 +9,4 @@ Package
  =====
   - Adjust directory structure in the maven ways
   - JavaScript unit test
+  - Remove test code when release

@@ -66,7 +66,7 @@ $(document).ready(function() {
   };
   load(month_data, 'month_stat');
   
-  var json_str = '{"x": ["1", "2"], "y": [23, 89]}';
+  var json_str = '{"y":[100,200,78,23,300],"x":["2012-1","2012-2","2012-3","2012-4","2012-5"]}';
   loadFromJson(json_str, 'json_str');
   
   // TEST

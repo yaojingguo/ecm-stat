@@ -3,10 +3,9 @@
 	<display-name>ecm-stat</display-name>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
-		<welcome-file>index.htm</welcome-file>
-		<welcome-file>index.jsp</welcome-file>
-		<welcome-file>default.html</welcome-file>
-		<welcome-file>default.htm</welcome-file>
-		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
+  <servlet>
+    <servlet-name>StatServlet</servlet-name>
+    <servlet-class>com.strongit.ecm.stat.StatServlet</servlet-class>
+  </servlet>
 </web-app>

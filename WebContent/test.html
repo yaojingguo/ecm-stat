@@ -12,6 +12,17 @@ var text = '{"x": ["1", "2"], "y": [23, 89]}';
 
 var json = JSON.parse(text);
 console.log(JSON.stringify(json));
+
+
+var jackson = {
+  jdbcConnection: {
+      driverClass: 'oracle.jdbc.driver.OracleDriver',
+      jdbcUrl: 'jdbc:oracle:thin:@//SN2010-01-007:1521/orcl',
+      user: 'user_value',
+      password: 'password_value'
+  }
+ };
+console.log(JSON.stringify(jackson));
 </script>
 </head>
 </html>
