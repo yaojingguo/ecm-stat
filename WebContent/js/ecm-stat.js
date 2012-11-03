@@ -69,6 +69,25 @@ $(document).ready(function() {
   var jsonStr = '{"y":[100,200,78,23,300],"x":["2012-1","2012-2","2012-3","2012-4","2012-5"]}';
   loadFromJson(jsonStr, 'jsonStr');
   
+  ///////////////////////////////////////////////////////////////////////////////////////
+  $("#statQuery").submit(function(e) {
+    e.preventDefault();
+    var dataString = $("#statQuery").serialize();
+    $.ajax({
+      type: "POST",
+      // url: "../../StatServlet",
+      url: "http://localhost:8080/ecm-stat/StatServlet",
+      data: dataString,
+      dataType: "json",
+      success: function(data) {
+//        var status = data.status == "success" ? "成功" : "失败";
+//        $("#status").html("<span>查询" + data.beginDate + "--" +
+//          data.endDate + "提交" + status +"</span>");
+        console.log('data: ' + data);
+      }
+    });
+  });
+  //////////////////////////////////////////////////////////////////////////////////////
   // TEST
 // testBarChart();
 
