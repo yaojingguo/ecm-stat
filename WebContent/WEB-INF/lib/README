@@ -1,0 +1,18 @@
+spring-jdbc
+===========
+spring-jdbc dependencies as described in
+http://blog.springsource.com/2009/12/02/obtaining-spring-3-artifacts-with-maven/
+- commons-logging-1.1.1.jar
+- spring-beans-3.0.5.RELEASE.jar
+- spring-context-3.0.5.RELEASE.jar
+- spring-core-3.0.5.RELEASE.jar
+- spring-jdbc-3.0.5.RELEASE.jar
+- spring-tx-3.0.5.RELEASE.jar
+
+
+spring-jdbc dependencies as defined by maven involves much more unneeded
+libraries.
+
+Other
+====
+- ojdbc6.jar: Oracle JDBC connector, downloaded from Oracle website.
