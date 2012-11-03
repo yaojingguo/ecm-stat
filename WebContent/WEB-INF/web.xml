@@ -8,4 +8,8 @@
     <servlet-name>StatServlet</servlet-name>
     <servlet-class>com.strongit.ecm.stat.StatServlet</servlet-class>
   </servlet>
+    <servlet-mapping>
+    <servlet-name>StatServlet</servlet-name>
+    <url-pattern>/StatServlet</url-pattern>
+  </servlet-mapping>
 </web-app>
