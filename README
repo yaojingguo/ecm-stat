@@ -4,3 +4,8 @@ Statistics for ECM.
 Package
 ========
  - Use min versions for JavaScript and CSS
+ 
+ TODO
+ =====
+  - Adjust directory structure in the maven ways
+  - JavaScript unit test
