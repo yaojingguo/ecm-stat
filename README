@@ -13,6 +13,7 @@ Task
  
  TODO
  =====
+  - Check the meaning of Joda 
   - Add logging
   - Adjust directory structure in the maven ways
   - JavaScript unit test

@@ -63,10 +63,14 @@ insert into login_log values('a', 'real_a', 2012, 10, 1, 3, '2012-10-01 03:08:20
 insert into login_log values('a', 'real_a', 2012, 10, 2, 2, '2012-10-02 02:10:02');
 insert into login_log values('a', 'real_a', 2012, 10, 2, 2, '2012-10-02 02:10:07');
 
+insert into login_log values('a', 'real_a', 2012, 7, 8, 2, '2012-07-08 02:08:01');
+
 insert into login_log values('a', 'real_a', 2012, 11, 1, 2, '2012-11-01 02:08:01');
 insert into login_log values('a', 'real_a', 2012, 11, 1, 2, '2012-11-01 02:08:02');
 insert into login_log values('a', 'real_a', 2012, 11, 1, 3, '2012-11-01 03:08:40');
 insert into login_log values('a', 'real_a', 2012, 11, 1, 3, '2012-11-01 03:08:20');
 insert into login_log values('a', 'real_a', 2012, 11, 2, 2, '2012-11-02 02:11:02');
 insert into login_log values('a', 'real_a', 2012, 11, 2, 2, '2012-11-02 02:11:07');
+
+insert into login_log values('a', 'real_a', 2011, 9, 0, 2, '2011-09-00 02:08:01');
 
