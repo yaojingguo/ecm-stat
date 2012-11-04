@@ -22,18 +22,6 @@ public class Conf extends BaseObject {
     conf = loadYaml();
   }
 
-//  public static Conf loadJson() {
-//    ObjectMapper mapper = new ObjectMapper();
-//    InputStream in = null;
-//    try {
-//      in = Conf.class.getResourceAsStream("/ecm-stat.json");
-//      Conf conf = (Conf) mapper.readValue(in, Conf.class);
-//      return conf;
-//    } catch (Exception e) {
-//      Closeables.closeQuietly(in);
-//      throw new RuntimeException(e);
-//    }
-//  }
   public static Conf loadYaml() {
     InputStream in = Conf.class.getResourceAsStream("/ecm-stat.yaml");
     Constructor constructor = new Constructor(Conf.class);
