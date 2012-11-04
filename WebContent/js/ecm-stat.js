@@ -79,14 +79,11 @@ $(document).ready(function() {
     var dataString = $("#statQuery").serialize();
     $.ajax({
       type: "POST",
-      // url: "../../StatServlet",
-      url: "http://localhost:8080/ecm-stat/StatServlet",
+       url: "StatServlet",
+//      url: "http://localhost:8080/ecm-stat/StatServlet",
       data: dataString,
       dataType: "json",
       success: function(data) {
-//        var status = data.status == "success" ? "成功" : "失败";
-//        $("#status").html("<span>查询" + data.beginDate + "--" +
-//          data.endDate + "提交" + status +"</span>");
         $('#jsonServer').remove();
         $('#query').append('<div id="jsonServer"></div>');
         console.log('data: ' + JSON.stringify(data));
@@ -105,7 +102,7 @@ function testBarChart() {
   var s1 = [ 2, 6, 7, 10 ];
   var ticks = [ 'a', 'b', 'c', 'd' ];
 
-  plot2 = $.jqplot('chart', [ s1 ], {
+  plot2 = $.jqplot('chart1', [ s1 ], {
     // Only animate if we're not using excanvas (not in IE 7 or IE 8)..
     animate: !$.jqplot.use_excanvas,
     seriesDefaults: {
