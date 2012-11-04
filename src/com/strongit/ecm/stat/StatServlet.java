@@ -21,7 +21,6 @@ public class StatServlet extends HttpServlet {
     String beginDate = request.getParameter("beginDate");
     String endDate = request.getParameter("endDate");
     int chartType = Integer.parseInt(request.getParameter("chartType"));
-//    int timeDimType = Integer.parseInt(request.getParameter("timeDimType"));
     System.out.println("beginDate: " + beginDate + ", endDate: " + endDate
         + ", chartType:" + chartType);
 
