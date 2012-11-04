@@ -1,19 +1,34 @@
-Statistics for ECM.
+===================
+Statistics for ECM
+===================
 
+Setup
+=====
+Software:
+ - Tomcat apache-tomcat-6.0.36
+ - Eclisep JEE 3.7
+ - MySQL 5.5.28
+ - Chrome browser
+
+Use ./conf/mysql.sql to set up the test database. Then choose 
+'Run on server' in Eclipse.
 
 Package
 ========
  - Use min versions for JavaScript and CSS
- 
 
- TODO
- =====
-  - Check the meaning of Joda 
-  - Add logging
-  - Adjust directory structure in the maven ways
-  - JavaScript unit test
-  - Remove test code when release
-   - Analyze and load file to database. 
-   - Schedule the task
-     - Quatz or cront4j
-     - If use python, introduce a lot of dependencies. Maybe to use clojure?
+Tasks
+===== 
+
+TODO
+=====
+- Check the meaning of Joda 
+- Add logging
+- Adjust directory structure in the maven ways
+- JavaScript unit test
+- Remove test code when release
+ - Analyze and load file to database. 
+ - Schedule the task
+   - Quatz or cront4j
+   - If use python, introduce a lot of dependencies. Maybe to use 
+     clojure?
