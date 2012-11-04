@@ -5,10 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 
-public class StatServletTest {
+public class StatTest {
   @Test
   public void testBuild() {
     System.out.println(buildSampleData());
@@ -33,13 +32,20 @@ public class StatServletTest {
       data.put("y", y);
       data.put("chartType", 0);
       
-      ObjectMapper mapper = new ObjectMapper();
-      String json = mapper.writeValueAsString(data);
+      String json = Stat.toJson(data);
       return json;
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
   
+  @Test
+  public void testDb() {
+    try {
+    Stat.queryData("", "", 0);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
   
 }
