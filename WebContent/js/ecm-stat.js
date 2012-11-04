@@ -48,6 +48,9 @@ function loadFromJson(jsonStr, div) {
 
 
 $(document).ready(function() {
+//  $('#jsonServer').remove();
+//  $('#query').append('<div id="jsonServer"></div>');
+  
   $.jqplot.config.enablePlugins = true;
   
   var dayData = {
@@ -84,6 +87,8 @@ $(document).ready(function() {
 //        var status = data.status == "success" ? "成功" : "失败";
 //        $("#status").html("<span>查询" + data.beginDate + "--" +
 //          data.endDate + "提交" + status +"</span>");
+        $('#jsonServer').remove();
+        $('#query').append('<div id="jsonServer"></div>');
         console.log('data: ' + JSON.stringify(data));
         load(data, 'jsonServer');
       }

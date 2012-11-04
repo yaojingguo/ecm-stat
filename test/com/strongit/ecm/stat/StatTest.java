@@ -6,12 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
 import com.google.common.io.Closeables;
+import com.strongit.ecm.stat.Stat.Query;
 
 public class StatTest {
   @Test
@@ -24,6 +23,7 @@ public class StatTest {
     try {
       System.out.println(Stat.buildJson("2011-01", "2013-01", 0));
       System.out.println(Stat.buildJson("2011-01-01", "2013-01-02", 0));
+      System.out.println(Stat.buildJson("2011-01-01 00", "2013-01-02 23", 1));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -41,21 +41,26 @@ public class StatTest {
       Closeables.closeQuietly(fileOut);
     }
   }
-
+  
   @Test
-  public void testDate() {
-    Assert.assertEquals("2012-10-05 00:00:00", Stat.addSuffix("2012-10-05"));
-    Assert.assertEquals("2012-09-01 00:00:00", Stat.addDaySuffix("2012-09"));
-
-    Assert.assertEquals(false, Stat.hasDay("2012-10"));
-    Assert.assertEquals(true, Stat.hasDay("2012-10-12"));
-    try {
-      Assert.assertEquals(true, Stat.hasDay("2012"));
-      Assert.fail();
-    } catch (IllegalArgumentException e) {
-    }
+  public void testPlusDate() {
+    print(Query.plusOneMonth("2012-12-01 00:00:00"));
+    print(Query.plusOneMonth("2012-01-01 00:00:00"));
+//    print(Query.plusOneMonth("2012-00-01 00:00:00"));
+    
+    print(Query.plusOneDay("2012-12-01 00:00:00"));
+    print(Query.plusOneDay("2012-12-31 00:00:00"));
+//    print(Query.plusOneDay("2012-12-00 00:00:00"));
+    
+    print(Query.plusOneHour("2012-12-01 00:00:00"));
+    print(Query.plusOneHour("2012-12-01 23:00:00"));
+//    print(Query.plusOneHour("2012-12-01 24:00:00"));
   }
 
+  private static void print(Object o) {
+    System.out.println(o);
+  }
+  
   public static String buildSampleData() {
     try {
       Map data = new HashMap();

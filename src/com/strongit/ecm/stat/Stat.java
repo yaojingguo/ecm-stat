@@ -19,24 +19,16 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.jdbc.core.RowMapper;
 
 public class Stat {
-  private static String SUFFIX = " 00:00:00";
-  public static DateTimeFormatter ymd = DateTimeFormat.forPattern("YYYY-MM-DD");
+  public static DateTimeFormatter ymd = DateTimeFormat.forPattern("YYYY-MM-dd");
   public static DateTimeFormatter ym = DateTimeFormat.forPattern("YYYY-MM");
 
   static String X_KEY = "x";
   static String Y_KEY = "y";
   static String CHARTTYPE_KEY = "chartType";
 
-  private static int YMD_LEN = 10;
   private static int YM_LEN = 7;
-
-  private static String monthSQl = "select login_date, count(*) as login_count  "
-      + " from login_log"
-      + " where ? <= login_date and login_date < ?"
-      + " group by year, month" + " order by year, month ASC;";
-  private static String daySQl = "select login_date, count(*) as login_count  "
-      + " from login_log" + " where ? <= login_date and login_date < ?"
-      + " group by year, month, day" + " order by year, month ASC;";
+  private static int YMD_LEN = 10;
+  private static int YMDH_LEN = 13;
 
   private static ObjectMapper mapper = new ObjectMapper();
 
@@ -48,39 +40,13 @@ public class Stat {
     }
   }
 
-  private static RowMapper monthMapper = new StatMapper(YM_LEN);
-  private static RowMapper dayMapper = new StatMapper(YMD_LEN);
-
-  private static class StatMapper implements RowMapper {
-    private int len;
-    public StatMapper(int len) {
-      this.len = len;
-    }
-    @Override
-    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-      List ls = new ArrayList();
-      int login_count = rs.getInt("login_count");
-      String login_year_month = rs.getDate("login_date")
-                                  .toString()
-                                  .substring(0, len);
-      ls.add(login_year_month);
-      ls.add(login_count);
-      return ls;
-    }
-  };
-
   public static Map queryData(String beginDate, String endDate) {
-    List table;
-    if (hasDay(beginDate)) {
-      beginDate = addSuffix(beginDate);
-      endDate = addSuffix(endDate);
-      table = null;
-      table = DbUtil.jdbcTmpl.query(daySQl, dayMapper, beginDate, endDate);
-    } else {
-      beginDate = addDaySuffix(beginDate);
-      endDate = addDaySuffix(endDate);
-      table = DbUtil.jdbcTmpl.query(monthSQl, monthMapper, beginDate, endDate);
-    }
+    Query q = new Query(beginDate, endDate);
+    List table = DbUtil.jdbcTmpl.query(q.getSql(),
+                                       q.getMapper(),
+                                       q.getBeginDate(),
+                                       q.getEndDate());
+
     Map map = transpose(table);
     return map;
   }
@@ -124,44 +90,133 @@ public class Stat {
       x.add(row.get(0));
       y.add(row.get(1));
     }
-    map.put("x", x);
-    map.put("y", y);
+    map.put(X_KEY, x);
+    map.put(Y_KEY, y);
     return map;
   }
 
-  static String format(int year, int month) {
+  static String createDate(int year, int month) {
     DateTime d = create(year, month, 1);
     return ym.print(d);
   }
 
-  static String format(int year, int month, int day) {
+  static String createDate(int year, int month, int day) {
     DateTime d = create(year, month, day);
     return ymd.print(d);
-  }
-
-  static String addDaySuffix(String dateStr) {
-    return addSuffix(dateStr + "-01");
-  }
-
-  static String addSuffix(String dateStr) {
-    return dateStr + SUFFIX;
-  }
-
-  static boolean hasDay(String dateStr) {
-    int len = dateStr.length();
-    switch (len) {
-      case 10 : // YMD_LEN
-        return true;
-      case 7 : // YM_LEN
-        return false;
-      default :
-        throw new IllegalArgumentException("'" + dateStr
-            + "' has a wrong length " + len);
-    }
   }
 
   private static DateTime create(int year, int month, int day) {
     return new DateTime(year, month, day, 0, 0, 0, 0);
   }
 
+  private static class StatMapper implements RowMapper {
+    private int len;
+    public StatMapper(int len) {
+      this.len = len;
+    }
+    @Override
+    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+      List ls = new ArrayList();
+      int login_count = rs.getInt("login_count");
+      java.sql. Timestamp login_date = rs.getTimestamp("login_date");
+      System.out.println("login_date: " + login_date);
+      String login_year_month = login_date
+                                  .toString()
+                                  .substring(0, len);
+      ls.add(login_year_month);
+      ls.add(login_count);
+      return ls;
+    }
+  };
+
+  static class Query extends BaseObject {
+    //@off
+    private static String monthSQl = "select login_date, count(*) as login_count  "
+        + " from login_log"
+        + " where ? <= login_date and login_date < ?"
+        + " group by year, month" 
+        + " order by year, month ASC;";
+    private static String daySQl = "select login_date, count(*) as login_count  "
+        + " from login_log"
+        + " where ? <= login_date and login_date < ?"
+        + " group by year, month, day" 
+        + " order by year, month, day ASC;";
+    private static String hourSQl = "select login_date, count(*) as login_count  "
+        + " from login_log"
+        + " where ? <= login_date and login_date < ?"
+        + " group by year, month, day, hour"
+        + " order by year, month, day, hour ASC;";
+    //@on
+    /**
+     * <tt>MM</tt> begins with 1. <tt>dd</tt> begins with 1. <tt>HH</tt>'s range
+     * is from 0 to 23.
+     */
+    private static DateTimeFormatter fmt = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss");
+
+    private RowMapper mapper;
+    private String sql;
+    private String beginDate;
+    private String endDate;
+
+    public Query(String beginDate, String endDate) {
+      this.beginDate = beginDate;
+      this.endDate = endDate;
+      build();
+    }
+
+    private void build() {
+      int len = beginDate.length();
+      if (len == YM_LEN) {
+        beginDate += "-01 00:00:00";
+        endDate += "-01 00:00:00";
+        endDate = plusOneMonth(endDate);
+        sql = monthSQl;
+      } else if (len == YMD_LEN) {
+        beginDate += " 00:00:00";
+        endDate += " 00:00:00";
+        endDate = plusOneDay(endDate);
+        sql = daySQl;
+      } else if (len == YMDH_LEN) {
+        beginDate += ":00:00";
+        endDate += ":00:00";
+        endDate = plusOneHour(endDate);
+        sql = hourSQl;
+      } else {
+        throw new IllegalArgumentException("'" + beginDate
+            + "' has a wrong length " + len);
+      }
+      mapper = new StatMapper(len);
+    }
+
+    static String plusOneMonth(String dateStr) {
+      DateTime dt = fmt.parseDateTime(dateStr);
+      dt = dt.plusMonths(1);
+      return fmt.print(dt);
+    }
+
+    static String plusOneDay(String dateStr) {
+      DateTime dt = fmt.parseDateTime(dateStr);
+      dt = dt.plusDays(1);
+      return fmt.print(dt);
+    }
+
+    static String plusOneHour(String dateStr) {
+      DateTime dt = fmt.parseDateTime(dateStr);
+      dt = dt.plusHours(1);
+      return fmt.print(dt);
+    }
+
+    public String getBeginDate() {
+      return beginDate;
+    }
+    public String getEndDate() {
+      return endDate;
+    }
+    public RowMapper getMapper() {
+      return mapper;
+    }
+    public String getSql() {
+      return sql;
+    }
+  }
 }
