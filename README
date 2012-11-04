@@ -5,11 +5,7 @@ Package
 ========
  - Use min versions for JavaScript and CSS
  
-Task
-====
- - Export CSV. JDBC to CSV library?
 
- 
  TODO
  =====
   - Check the meaning of Joda 

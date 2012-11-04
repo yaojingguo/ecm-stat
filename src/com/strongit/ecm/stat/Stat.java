@@ -7,6 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -45,8 +50,7 @@ public class Stat {
 
   private static RowMapper monthMapper = new StatMapper(YM_LEN);
   private static RowMapper dayMapper = new StatMapper(YMD_LEN);
-  
-  
+
   private static class StatMapper implements RowMapper {
     private int len;
     public StatMapper(int len) {
@@ -65,22 +69,50 @@ public class Stat {
     }
   };
 
-  public static String queryData(String beginDate, String endDate, int chartType) {
+  public static Map queryData(String beginDate, String endDate) {
     List table;
     if (hasDay(beginDate)) {
       beginDate = addSuffix(beginDate);
       endDate = addSuffix(endDate);
       table = null;
-       table = DbUtil.jdbcTmpl.query(daySQl, dayMapper, beginDate, endDate);
+      table = DbUtil.jdbcTmpl.query(daySQl, dayMapper, beginDate, endDate);
     } else {
       beginDate = addDaySuffix(beginDate);
       endDate = addDaySuffix(endDate);
       table = DbUtil.jdbcTmpl.query(monthSQl, monthMapper, beginDate, endDate);
     }
     Map map = transpose(table);
+    return map;
+  }
+
+  public static String buildJson(String beginDate, String endDate, int chartType) {
+    Map map = queryData(beginDate, endDate);
     map.put(CHARTTYPE_KEY, chartType);
-    String json = toJson(map);
-    return json;
+    return toJson(map);
+  }
+
+  public static Workbook buildExcel(String beginDate, String endDate) {
+    Map map = queryData(beginDate, endDate);
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet = wb.createSheet("系统访问情况统计报表");
+    // header
+    Row header = sheet.createRow(0);
+    Cell dateLabel = header.createCell(0);
+    dateLabel.setCellValue("日期");
+    Cell loginCountLabel = header.createCell(1);
+    loginCountLabel.setCellValue("登录次数");
+    // data
+    List x = (List) map.get(X_KEY);
+    List y = (List) map.get(Y_KEY);
+    int dateRowCount = x.size();
+    for (int i = 0; i < dateRowCount; i++) {
+      Row data = sheet.createRow(i + 1);
+      String date = (String) x.get(i);
+      String loginCount = ((Integer) y.get(i)).toString();
+      data.createCell(0).setCellValue(date);
+      data.createCell(1).setCellValue(loginCount);
+    }
+    return wb;
   }
 
   static Map transpose(List table) {

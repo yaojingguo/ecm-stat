@@ -28,7 +28,7 @@ public class StatServlet extends HttpServlet {
     response.setContentType("application/json");
     PrintWriter pw = response.getWriter();
 //    String json = StatTest.buildSampleData();
-    String json = Stat.queryData(beginDate, endDate, chartType);
+    String json = Stat.buildJson(beginDate, endDate, chartType);
     System.out.println("data json string: " + json);
     pw.print(json);
     pw.close();

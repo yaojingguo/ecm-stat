@@ -1,5 +1,6 @@
 package com.strongit.ecm.stat;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,12 +8,52 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
+
+import com.google.common.io.Closeables;
 
 public class StatTest {
   @Test
-  public void testBuild() {
+  public void testBuildQueryResult() {
     System.out.println(buildSampleData());
+  }
+
+  @Test
+  public void testBuildJson() {
+    try {
+      System.out.println(Stat.buildJson("2011-01", "2013-01", 0));
+      System.out.println(Stat.buildJson("2011-01-01", "2013-01-02", 0));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
+  public void testBuildExcel() {
+    FileOutputStream fileOut = null;
+    try {
+      fileOut = new FileOutputStream("系统访问情况统计报表.xls");
+      Workbook wb = Stat.buildExcel("2011-01", "2013-01");
+      wb.write(fileOut);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Closeables.closeQuietly(fileOut);
+    }
+  }
+
+  @Test
+  public void testDate() {
+    Assert.assertEquals("2012-10-05 00:00:00", Stat.addSuffix("2012-10-05"));
+    Assert.assertEquals("2012-09-01 00:00:00", Stat.addDaySuffix("2012-09"));
+
+    Assert.assertEquals(false, Stat.hasDay("2012-10"));
+    Assert.assertEquals(true, Stat.hasDay("2012-10-12"));
+    try {
+      Assert.assertEquals(true, Stat.hasDay("2012"));
+      Assert.fail();
+    } catch (IllegalArgumentException e) {
+    }
   }
 
   public static String buildSampleData() {
@@ -40,34 +81,4 @@ public class StatTest {
       throw new RuntimeException(e);
     }
   }
-
-  @Test
-  public void testDb() {
-    try {
-      System.out.println(Stat.queryData("2011-01", "2011-01", 0));
-      System.out.println(Stat.queryData("2011-01-01", "2013-01-02", 0));
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  @Test
-  public void testDate() {
-    Assert.assertEquals("2012-10-05 00:00:00",
-                        Stat.addSuffix("2012-10-05"));
-    Assert.assertEquals("2012-09-01 00:00:00", Stat.addDaySuffix("2012-09"));
-    
-    Assert.assertEquals(false, Stat.hasDay("2012-10"));
-    Assert.assertEquals(true, Stat.hasDay("2012-10-12"));
-    try {
-      Assert.assertEquals(true, Stat.hasDay("2012"));
-      Assert.fail();
-    } catch (IllegalArgumentException e) {
-    }
-    
-//    System.out.println();
-//    Assert.assertEquals("2012-01", Stat.format(2012, 1));
-//    Assert.assertEquals("2012-01-21", Stat.format(2012, 1, 21));
-  }
-
 }
