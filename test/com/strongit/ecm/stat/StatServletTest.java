@@ -8,13 +8,13 @@ import java.util.Map;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 
-public class JacksonTest {
+public class StatServletTest {
   @Test
   public void testBuild() {
-    System.out.println(buildData());
+    System.out.println(buildSampleData());
   }
   
-  public static String buildData() {
+  public static String buildSampleData() {
     try {
       Map data = new HashMap();
       List x = new ArrayList();

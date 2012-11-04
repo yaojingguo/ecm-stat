@@ -1,8 +1,0 @@
-{
-  "jdbcConnection": {
-      "driverClass": "oracle.jdbc.driver.OracleDriver",
-      "jdbcUrl": "jdbc:oracle:thin:@//SN2010-01-007:1521/orcl",
-      "user": "user_value",
-      "password": "password_value"
-  }
- }

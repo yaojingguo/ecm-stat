@@ -8,6 +8,7 @@ Package
  
 Task
 ====
+ - Use YAML for config
  - Datbase (MySQL)
    - Schema design
    - Spring coding

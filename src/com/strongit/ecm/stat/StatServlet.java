@@ -27,7 +27,7 @@ public class StatServlet extends HttpServlet {
     response.setCharacterEncoding("UTF-8");
     response.setContentType("application/json");
     PrintWriter pw = response.getWriter();
-    String json = JacksonTest.buildData();
+    String json = StatServletTest.buildSampleData();
     System.out.println("data json string: " + json);
     pw.print(json);
     pw.close();
