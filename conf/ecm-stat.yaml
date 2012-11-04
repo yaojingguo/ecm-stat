@@ -1,9 +1,14 @@
 # Project Configuration file
 
+#jdbcConnection:
+#  driverClass: "oracle.jdbc.driver.OracleDriver"
+#  jdbcUrl: "jdbc:oracle:thin:@//db_server:1521/orcl"
+#  user: "user_value"
+#  password: "password_value"
+
+
 jdbcConnection:
-  driverClass: "oracle.jdbc.driver.OracleDriver"
-  jdbcUrl: "jdbc:oracle:thin:@//db_server:1521/orcl"
-  user: "user_value"
-  password: "password_value"
-
-
+  driverClass: "com.mysql.jdbc.Driver"
+  jdbcUrl: "jdbc:mysql://localhost:3306/ecm-stat"
+  user: "root"
+  password: "passw0rd"
