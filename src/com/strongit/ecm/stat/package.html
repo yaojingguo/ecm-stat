@@ -1,0 +1,28 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+  <h2>Protocol</h2>
+  <p>The following text uses an example to describe protocol between
+    client and server. Server end receives a request:</p>
+  <tt>{beginDate: "2011-01", endDate: ""2011-05"", "chartType": 0}</tt>. It produces
+  the following result:
+  <pre>
+  {"x": ["2011-01", "2011-02", "2011-03", "2011-04", "2011-05"]
+   "y": [23, 26, 100, 45, 50]
+   "chartType": 0
+  }
+  </pre>
+  The format of date decides the report type:
+  <ol>
+    <li><tt>yyyy-MM</tt>: month report</li>
+    <li><tt>yyyy-MM-dd</tt>: day report</li>
+    <li><tt>yyyy-MM-dd HH</tt>: hour report</li>
+  </ol>
+  <p>
+  <tt>MM</tt> begins with <tt>1</tt>. <tt>dd</tt> begins with <tt>1</tt>. <tt>HH</tt> begins with <tt>0</tt>.
+  For a hour report for one day, an example is from <tt>2011-01-01 00</tt> to<tt>2011-01-01 23</tt>
+  .</p>
+</body>
+</html>
