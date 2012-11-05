@@ -13,16 +13,14 @@ Software:
 Use ./conf/mysql.sql to set up the test database. Then choose 
 'Run on server' in Eclipse.
 
-Package
-========
- - Use min versions for JavaScript and CSS
 
 Tasks
 ===== 
 
 TODO
-=====
-- Check the meaning of Joda 
+===== 
+- Use min versions for JavaScript and CSS when packaging
+- Check the meaning of Joda ISOChronology
 - Add logging
 - Adjust directory structure in the maven ways
 - JavaScript unit test

@@ -23,7 +23,7 @@ public class StatTest {
     try {
       System.out.println(Stat.buildJson("2011-01", "2013-01", 0));
       System.out.println(Stat.buildJson("2011-01-01", "2013-01-02", 0));
-      System.out.println(Stat.buildJson("2011-01-01 00", "2013-01-02 23", 1));
+      System.out.println(Stat.buildJson("2011-01-01 00", "2013-01-01 23", 1));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -41,26 +41,26 @@ public class StatTest {
       Closeables.closeQuietly(fileOut);
     }
   }
-  
+
   @Test
   public void testPlusDate() {
     print(Query.plusOneMonth("2012-12-01 00:00:00"));
     print(Query.plusOneMonth("2012-01-01 00:00:00"));
-//    print(Query.plusOneMonth("2012-00-01 00:00:00"));
-    
+    // print(Query.plusOneMonth("2012-00-01 00:00:00"));
+
     print(Query.plusOneDay("2012-12-01 00:00:00"));
     print(Query.plusOneDay("2012-12-31 00:00:00"));
-//    print(Query.plusOneDay("2012-12-00 00:00:00"));
-    
+    // print(Query.plusOneDay("2012-12-00 00:00:00"));
+
     print(Query.plusOneHour("2012-12-01 00:00:00"));
     print(Query.plusOneHour("2012-12-01 23:00:00"));
-//    print(Query.plusOneHour("2012-12-01 24:00:00"));
+    // print(Query.plusOneHour("2012-12-01 24:00:00"));
   }
 
   private static void print(Object o) {
     System.out.println(o);
   }
-  
+
   public static String buildSampleData() {
     try {
       Map data = new HashMap();
@@ -86,4 +86,5 @@ public class StatTest {
       throw new RuntimeException(e);
     }
   }
+
 }

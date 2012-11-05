@@ -3,7 +3,7 @@ function getRender(name) {
     case 0:
       return $.jqplot.BarRenderer;
     case 1:
-      return undefined;
+      return undefined; // means a line renderer.
     default:
       throw new Error('Unsupported renderer ' + name);
   }

@@ -19,8 +19,8 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.jdbc.core.RowMapper;
 
 public class Stat {
-  public static DateTimeFormatter ymd = DateTimeFormat.forPattern("YYYY-MM-dd");
-  public static DateTimeFormatter ym = DateTimeFormat.forPattern("YYYY-MM");
+  public static DateTimeFormatter ymd = DateTimeFormat.forPattern("yyyy-MM-dd");
+  public static DateTimeFormatter ym = DateTimeFormat.forPattern("yyyy-MM");
 
   static String X_KEY = "x";
   static String Y_KEY = "y";
@@ -32,6 +32,9 @@ public class Stat {
 
   private static ObjectMapper mapper = new ObjectMapper();
 
+  /**
+   * Return the JSON string for the given object
+   */
   public static String toJson(Object o) {
     try {
       return mapper.writeValueAsString(o);
@@ -40,6 +43,9 @@ public class Stat {
     }
   }
 
+  /***
+   * Database query and convert the result into a map.
+   */
   public static Map queryData(String beginDate, String endDate) {
     Query q = new Query(beginDate, endDate);
     List table = DbUtil.jdbcTmpl.query(q.getSql(),
@@ -118,11 +124,9 @@ public class Stat {
     public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
       List ls = new ArrayList();
       int login_count = rs.getInt("login_count");
-      java.sql. Timestamp login_date = rs.getTimestamp("login_date");
+      java.sql.Timestamp login_date = rs.getTimestamp("login_date");
       System.out.println("login_date: " + login_date);
-      String login_year_month = login_date
-                                  .toString()
-                                  .substring(0, len);
+      String login_year_month = login_date.toString().substring(0, len);
       ls.add(login_year_month);
       ls.add(login_count);
       return ls;
@@ -151,7 +155,7 @@ public class Stat {
      * <tt>MM</tt> begins with 1. <tt>dd</tt> begins with 1. <tt>HH</tt>'s range
      * is from 0 to 23.
      */
-    private static DateTimeFormatter fmt = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss");
+    private static DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
     private RowMapper mapper;
     private String sql;
@@ -187,7 +191,10 @@ public class Stat {
       }
       mapper = new StatMapper(len);
     }
-
+    /*
+     * To specify a date range for SQL query, endDate needs to be inceased at
+     * the least part. For example, 2012-01 needs to be increased to 2012-02.
+     */
     static String plusOneMonth(String dateStr) {
       DateTime dt = fmt.parseDateTime(dateStr);
       dt = dt.plusMonths(1);
