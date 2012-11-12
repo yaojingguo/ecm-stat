@@ -44,6 +44,11 @@ function loadFromJson(jsonStr, div) {
   load(data, div);
 }
 
+function getWidth(data) {
+  var len = data.x.length;
+  return len * 75;
+}
+
 $(document).ready(function() {
   $.jqplot.config.enablePlugins = true;
   
@@ -56,8 +61,12 @@ $(document).ready(function() {
       data: dataString,
       dataType: "json",
       success: function(data) {
+        /*
+         * Re-draw the div.
+         */
+        var width = getWidth(data);
         $('#jsonServer').remove();
-        $('#query').append('<div id="jsonServer"></div>');
+        $('#query').append('<div id="jsonServer" style="width: ' + width + 'px"></div>');
         console.log('data: ' + JSON.stringify(data));
         load(data, 'jsonServer');
       }
