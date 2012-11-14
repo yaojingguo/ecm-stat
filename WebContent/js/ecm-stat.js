@@ -1,3 +1,20 @@
+var ECM_STAT ={
+    fmt_map: {
+      '7': 'YYYY-MM',
+      '10': 'YYYY-MM-DD',
+      '13': 'YYYY-MM-DD HH'
+    }
+};
+
+function verifyDate(dateStr) {
+  var len = dateStr.length;
+  var fmt = ECM_STAT.fmt_map['' + len];
+  if (fmt == undefined)
+    throw new Error(dateStr + ' has a illegal length ' + len);
+  if (!moment(dateStr, fmt).isValid())
+    throw new Error(dateStr + ' is not valid date string with format ' + fmt);
+}
+
 function getRender(name) {
   switch (name) {
     case 0:
@@ -54,7 +71,14 @@ $(document).ready(function() {
   
   $("#statQuery").submit(function(e) {
     e.preventDefault();
-    var dataString = $("#statQuery").serialize();
+    var formId = 'statQuery';
+    var query = $('#' + formId);
+    var beginDate =  document.forms[formId]['beginDate'].value;
+    var endDate = document.forms[formId]['endDate'].value;
+    console.log('form: beginDate=' + beginDate + ', endDate= ' + endDate);
+    verifyDate(beginDate);
+    verifyDate(endDate);
+    var dataString = query.serialize();
     $.ajax({
       type: "POST",
        url: "StatServlet",
@@ -72,7 +96,6 @@ $(document).ready(function() {
       }
     });
   });
- 
   
   ////////////////////////////////////////////////////////////////////
   // Sample Charts
@@ -123,4 +146,12 @@ function testBarChart() {
       show: false
     }
   });
+}
+
+function testVerifyDate() {
+  verifyDate('2012-01');
+  verifyDate('2012-01-01');
+  verifyDate('2012-01-01 00');
+  
+  verifyDate('2012-34');
 }
