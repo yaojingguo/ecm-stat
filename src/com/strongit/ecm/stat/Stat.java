@@ -19,16 +19,25 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.jdbc.core.RowMapper;
 
 public class Stat {
-  public static DateTimeFormatter ymd = DateTimeFormat.forPattern("yyyy-MM-dd");
+  public static int YM_LEN = 7;
+  public static int YMD_LEN = 10;
+  public static int YMDH_LEN = 13;
+
   public static DateTimeFormatter ym = DateTimeFormat.forPattern("yyyy-MM");
+  public static DateTimeFormatter ymd = DateTimeFormat.forPattern("yyyy-MM-dd");
+  public static DateTimeFormatter ymdh = DateTimeFormat.forPattern("yyyy-MM-dd HH");
 
   static String X_KEY = "x";
   static String Y_KEY = "y";
   static String CHARTTYPE_KEY = "chartType";
 
-  private static int YM_LEN = 7;
-  private static int YMD_LEN = 10;
-  private static int YMDH_LEN = 13;
+  private static Map<Integer, DateTimeFormatter> fmt_map = new HashMap<Integer, DateTimeFormatter>();
+
+  static {
+    fmt_map.put(YM_LEN, ym);
+    fmt_map.put(YMD_LEN, ymd);
+    fmt_map.put(YMDH_LEN, ymdh);
+  }
 
   private static ObjectMapper mapper = new ObjectMapper();
 
@@ -43,18 +52,93 @@ public class Stat {
     }
   }
 
+  static List<String> range(String beginStr, String endStr, int len) {
+    DateTimeFormatter fmt = fmt_map.get(len);
+    DateTime begin = fmt.parseDateTime(beginStr);
+    DateTime end = fmt.parseDateTime(endStr);
+
+    List<DateTime> dates = new ArrayList<DateTime>();
+    while (begin.isBefore(end) || begin.isEqual(end)) {
+      dates.add(begin);
+      if (len == YM_LEN) {
+        begin = begin.plusMonths(1);
+      } else if (len == YMD_LEN) {
+        begin = begin.plusDays(1);
+      } else if (len == YMDH_LEN) {
+        begin = begin.plusHours(1);
+      } else {
+        throw new IllegalStateException();
+      }
+    }
+
+    List<String> strs = new ArrayList<String>();
+    for (DateTime d : dates) {
+      strs.add(fmt.print(d));
+    }
+    return strs;
+  }
+
+  static List<List> fill(List<List> oldTable, int len) {
+    List<List> newTable = new ArrayList<List>();
+
+    int size = oldTable.size();
+    if (size < 2)
+      return oldTable;
+    for (int i = 0; i < size - 1; i++) {
+      List begin = oldTable.get(i);
+      List end = oldTable.get(i + 1);
+      List<String> xRange = range((String) begin.get(0),
+                                  (String) end.get(0),
+                                  len);
+      newTable.add(begin);
+      for (int j = 1; j < xRange.size() - 1; j++) {
+        List zeroEntry = new ArrayList();
+        zeroEntry.add(xRange.get(j));
+        zeroEntry.add(0);
+        newTable.add(zeroEntry);
+      }
+    }
+    newTable.add(oldTable.get(size-1));
+    return newTable;
+  }
+
   /***
    * Database query and convert the result into a map.
    */
   public static Map queryData(String beginDate, String endDate) {
     Query q = new Query(beginDate, endDate);
-    List table = DbUtil.jdbcTmpl.query(q.getSql(),
-                                       q.getMapper(),
-                                       q.getBeginDate(),
-                                       q.getEndDate());
-
+    StatMapper mapper = q.getMapper();
+    List<List> table = DbUtil.jdbcTmpl.query(q.getSql(),
+                                             mapper,
+                                             q.getBeginDate(),
+                                             q.getEndDate());
+    addBeginEndIfMissing(beginDate, endDate, table);
+    // //////////////////////////////////////////////////////
+    int len = mapper.getLen();
+    table = fill(table, len);
+    // //////////////////////////////////////////////////////
     Map map = transpose(table);
     return map;
+  }
+
+  private static void addBeginEndIfMissing(String beginDate,
+                                           String endDate,
+                                           List<List> table) {
+    System.out.println("table from database: " + table);
+    if (table.size() == 0 || !table.get(0).get(0).equals(beginDate)) {
+      List begin = new ArrayList();
+      begin.add(beginDate);
+      begin.add(0);
+      table.add(0, begin);
+    }
+    if (!endDate.equals(beginDate)
+        && !table.get(table.size() - 1).get(0).equals(endDate)) {
+      List end = new ArrayList();
+      end.add(endDate);
+      end.add(0);
+      table.add(end);
+    }
+    System.out.println("table after adding missing begin and end: " + table);
   }
 
   public static String buildJson(String beginDate, String endDate, int chartType) {
@@ -101,19 +185,19 @@ public class Stat {
     return map;
   }
 
-  static String createDate(int year, int month) {
-    DateTime d = create(year, month, 1);
-    return ym.print(d);
-  }
-
-  static String createDate(int year, int month, int day) {
-    DateTime d = create(year, month, day);
-    return ymd.print(d);
-  }
-
-  private static DateTime create(int year, int month, int day) {
-    return new DateTime(year, month, day, 0, 0, 0, 0);
-  }
+  // static String createDate(int year, int month) {
+  // DateTime d = create(year, month, 1);
+  // return ym.print(d);
+  // }
+  //
+  // static String createDate(int year, int month, int day) {
+  // DateTime d = create(year, month, day);
+  // return ymd.print(d);
+  // }
+  //
+  // private static DateTime create(int year, int month, int day) {
+  // return new DateTime(year, month, day, 0, 0, 0, 0);
+  // }
 
   private static class StatMapper implements RowMapper {
     private int len;
@@ -126,10 +210,13 @@ public class Stat {
       int login_count = rs.getInt("login_count");
       java.sql.Timestamp login_date = rs.getTimestamp("login_date");
       System.out.println("login_date: " + login_date);
-      String login_year_month = login_date.toString().substring(0, len);
-      ls.add(login_year_month);
+      String loginDateStr = login_date.toString().substring(0, len);
+      ls.add(loginDateStr);
       ls.add(login_count);
       return ls;
+    }
+    public int getLen() {
+      return len;
     }
   };
 
@@ -157,7 +244,7 @@ public class Stat {
      */
     private static DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
-    private RowMapper mapper;
+    private StatMapper mapper;
     private String sql;
     private String beginDate;
     private String endDate;
@@ -219,7 +306,7 @@ public class Stat {
     public String getEndDate() {
       return endDate;
     }
-    public RowMapper getMapper() {
+    public StatMapper getMapper() {
       return mapper;
     }
     public String getSql() {

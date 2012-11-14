@@ -1,16 +1,74 @@
 var ECM_STAT ={
     fmt_map: {
-      '7': 'YYYY-MM',
-      '10': 'YYYY-MM-DD',
-      '13': 'YYYY-MM-DD HH'
+      '7': {fmt: 'YYYY-MM', unit: 'months'},
+      '10': {fmt: 'YYYY-MM-DD', unit: 'days'},
+      '13': {fmt: 'YYYY-MM-DD HH', unit: 'hours'}
     }
 };
 
+function infoData(data) {
+  console.log('x: ' + data.x + ', y: ' + data.y);
+}
+
+/*
+ * Return a series dates between beginDate and endDate.
+ */
+function range(beginDateStr, endDateStr) {
+  console.log('beginDate: ' + beginDateStr + ', endDateStr: ' + endDateStr);
+  var len = beginDateStr.length;
+  var mapVal = ECM_STAT.fmt_map['' + len];
+  if (mapVal == undefined)
+    throw new Error(dateStr + ' has a illegal length ' + len);
+  
+  var fmt = mapVal.fmt;
+  var unit = mapVal.unit;
+
+  var beginDate = moment(beginDateStr, fmt);
+  var endDate = moment(endDateStr, fmt);
+  var series = [];
+  while (beginDate <= endDate) {
+    //infoHour(beginDate);
+    series.push(beginDate.clone());
+    beginDate.add(unit, 1);
+  }
+
+  for (var i = 0; i < series.length; i++)
+    series[i] = series[i].format(fmt);
+  console.log('Date range: ' + series);
+  return series;
+}
+
+/*
+ * Fill the dates which does not have data in database.
+ */
+function fill(data) {
+  if (data.x.length < 2) // No need to fill
+    return data;
+  var x = [];
+  var y = [];
+  var xRange = [];
+  for (var i = 0; i < data.x.length-1; i++) {
+    xRange = range(data.x[i], data.x[i+1]);
+    for (var j = 0; j < xRange.length-1; j++) 
+      x.push(xRange[j]);
+    y.push(data.y[i]);
+    for (var j = 0; j < xRange.length-2; j++) 
+      y.push(0);
+  }
+
+  x.push(data.x[data.x.length-1]);
+  y.push(data.y[data.x.length-1]);
+  data.x = x;
+  data.y = y;
+  return data;
+}
+
 function verifyDate(dateStr) {
   var len = dateStr.length;
-  var fmt = ECM_STAT.fmt_map['' + len];
-  if (fmt == undefined)
+  var mapVal = ECM_STAT.fmt_map['' + len];
+  if (mapVal == undefined)
     throw new Error(dateStr + ' has a illegal length ' + len);
+  var fmt = mapVal.fmt;
   if (!moment(dateStr, fmt).isValid())
     throw new Error(dateStr + ' is not valid date string with format ' + fmt);
 }
@@ -85,17 +143,23 @@ $(document).ready(function() {
       data: dataString,
       dataType: "json",
       success: function(data) {
+        console.log('data: ' + JSON.stringify(data));
+        // Client side fill is not used. Server side has filled data.
+//        data = fill(data);
         /*
          * Re-draw the div.
          */
         var width = getWidth(data);
         $('#jsonServer').remove();
         $('#query').append('<div id="jsonServer" style="width: ' + width + 'px"></div>');
-        console.log('data: ' + JSON.stringify(data));
         load(data, 'jsonServer');
       }
     });
   });
+  
+//  testVerifyDate();
+//  testRange();
+//  testFill();
   
   ////////////////////////////////////////////////////////////////////
   // Sample Charts
@@ -155,3 +219,47 @@ function testVerifyDate() {
   
   verifyDate('2012-34');
 }
+
+function testRange() {
+  // month
+  console.log('============== Month');
+  range('2012-01', '2012-01');
+  range('2012-01', '2012-02');
+  range('2012-01', '2012-12');
+  range('2012-11', '2013-02');
+
+  // day
+  console.log('============== Day');
+  range('2012-01-01', '2012-01-01');
+  range('2012-01-01', '2012-01-03');
+  range('2012-01-30', '2012-02-03');
+
+  // hour
+  console.log('============== Hour');
+  range('2012-01-01 00', '2012-01-01 01');
+  range('2012-01-01 00', '2012-01-01 23');
+
+  //range('201-01-01 00', '2012-01-01 23');
+}
+
+function testFill() {
+  // month
+  console.log('============== Month');
+  infoData(fill({x: ['2012-01'], y: [12]}));
+  infoData(fill({x: ['2012-01', '2012-02'], y: [12, 20]}));
+  infoData(fill({x: ['2012-01', '2012-03'], y: [12, 20]}));
+  infoData(fill({x: ['2012-01', '2012-12'], y: [12, 20]}));
+  infoData(fill({x: ['2012-01', '2012-03', '2012-07'], y: [12, 20, 100]}));
+
+  // day
+  console.log('============== Day');
+  infoData(fill({x: ['2012-01-01'], y: [100]}));
+  infoData(fill({x: ['2012-01-01', '2012-01-03'], y: [1, 7]}));
+  infoData(fill({x: ['2012-01-30', '2012-02-03'], y: [7, 8]}));
+
+  // hour
+  console.log('============== Hour');
+  infoData(fill({x: ['2012-01-01 00', '2012-01-01 01'], y: [12, 33]}));
+  infoData(fill({x: ['2012-01-01 00', '2012-01-01 23'], y: [23, 14]}));
+}
+
