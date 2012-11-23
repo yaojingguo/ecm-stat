@@ -20,6 +20,7 @@ public class ReportServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
+    resp.setContentType("application/vnd.ms-excel");
     OutputStream out = resp.getOutputStream();
     Workbook wb = Stat.buildExcel("2011-01", "2013-01");
     wb.write(out);

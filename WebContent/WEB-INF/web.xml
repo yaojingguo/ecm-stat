@@ -20,6 +20,6 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>ReportServlet</servlet-name>
-    <url-pattern>*.xsl</url-pattern>
+    <url-pattern>*.xls</url-pattern>
   </servlet-mapping>
 </web-app>
