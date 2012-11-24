@@ -22,4 +22,13 @@
     <servlet-name>ReportServlet</servlet-name>
     <url-pattern>*.xls</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>QueryServlet</servlet-name>
+    <servlet-class>com.strongit.ecm.stat.QueryServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>QueryServlet</servlet-name>
+    <url-pattern>/QueryServlet</url-pattern>
+  </servlet-mapping>  
 </web-app>

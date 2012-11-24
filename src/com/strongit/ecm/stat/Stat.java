@@ -39,19 +39,6 @@ public class Stat {
     fmt_map.put(YMDH_LEN, ymdh);
   }
 
-  private static ObjectMapper mapper = new ObjectMapper();
-
-  /**
-   * Return the JSON string for the given object
-   */
-  public static String toJson(Object o) {
-    try {
-      return mapper.writeValueAsString(o);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   static List<String> range(String beginStr, String endStr, int len) {
     DateTimeFormatter fmt = fmt_map.get(len);
     DateTime begin = fmt.parseDateTime(beginStr);
@@ -108,7 +95,7 @@ public class Stat {
   public static Map queryData(String beginDate, String endDate) {
     Query q = new Query(beginDate, endDate);
     StatMapper mapper = q.getMapper();
-    List<List> table = DbUtil.jdbcTmpl.query(q.getSql(),
+    List<List> table = Util.jdbcTmpl.query(q.getSql(),
                                              mapper,
                                              q.getBeginDate(),
                                              q.getEndDate());
@@ -144,7 +131,7 @@ public class Stat {
   public static String buildJson(String beginDate, String endDate, int chartType) {
     Map map = queryData(beginDate, endDate);
     map.put(CHARTTYPE_KEY, chartType);
-    return toJson(map);
+    return Util.toJson(map);
   }
 
   public static Workbook buildExcel(String beginDate, String endDate) {
