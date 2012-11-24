@@ -225,11 +225,7 @@ public class Stat {
         + " group by year, month, day, hour"
         + " order by year, month, day, hour ASC;";
     //@on
-    /**
-     * <tt>MM</tt> begins with 1. <tt>dd</tt> begins with 1. <tt>HH</tt>'s range
-     * is from 0 to 23.
-     */
-    private static DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+
 
     private StatMapper mapper;
     private String sql;
@@ -270,21 +266,21 @@ public class Stat {
      * the least part. For example, 2012-01 needs to be increased to 2012-02.
      */
     static String plusOneMonth(String dateStr) {
-      DateTime dt = fmt.parseDateTime(dateStr);
+      DateTime dt = Util.fmt.parseDateTime(dateStr);
       dt = dt.plusMonths(1);
-      return fmt.print(dt);
+      return Util.fmt.print(dt);
     }
 
     static String plusOneDay(String dateStr) {
-      DateTime dt = fmt.parseDateTime(dateStr);
+      DateTime dt = Util.fmt.parseDateTime(dateStr);
       dt = dt.plusDays(1);
-      return fmt.print(dt);
+      return Util.fmt.print(dt);
     }
 
     static String plusOneHour(String dateStr) {
-      DateTime dt = fmt.parseDateTime(dateStr);
+      DateTime dt = Util.fmt.parseDateTime(dateStr);
       dt = dt.plusHours(1);
-      return fmt.print(dt);
+      return Util.fmt.print(dt);
     }
 
     public String getBeginDate() {
